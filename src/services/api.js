@@ -8,6 +8,7 @@ export const api = {
   
   // Financials
   getTodayFinancials: () => axios.get(`${API_BASE}/financials/today`),
+  getFinancialsByDate: (date) => axios.get(`${API_BASE}/financials/daily/${date}`),
   updateIncome: (date, source, amount) => 
     axios.post(`${API_BASE}/financials/income/${date}?source=${source}&amount=${amount}`),
   

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
 const Financials = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [financials, setFinancials] = useState(null);
   const [incomeForm, setIncomeForm] = useState({
     customerAdvance: '',
@@ -14,11 +15,11 @@ const Financials = () => {
 
   useEffect(() => {
     loadFinancials();
-  }, []);
+  }, [selectedDate]);
 
   const loadFinancials = async () => {
     try {
-      const response = await api.getTodayFinancials();
+      const response = await api.getFinancialsByDate(selectedDate);
       setFinancials(response.data);
       setIncomeForm({
         customerAdvance: response.data.customerAdvance || '',
@@ -30,13 +31,22 @@ const Financials = () => {
       });
     } catch (error) {
       console.error('Error loading financials:', error);
+      // Initialize empty form if no data exists
+      setFinancials(null);
+      setIncomeForm({
+        customerAdvance: '',
+        tattooing: '',
+        tattooRemoval: '',
+        piercing: '',
+        productSale: '',
+        etc: ''
+      });
     }
   };
 
   const updateIncome = async (source, amount) => {
     try {
-      const today = new Date().toISOString().split('T')[0];
-      await api.updateIncome(today, source, amount);
+      await api.updateIncome(selectedDate, source, amount);
       loadFinancials();
     } catch (error) {
       console.error('Error updating income:', error);
@@ -52,7 +62,24 @@ const Financials = () => {
 
   return (
     <div>
-      <h1 style={{ marginBottom: '30px' }}>Daily Financials</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <h1>Daily Financials</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <label style={{ fontWeight: 'bold' }}>Select Date:</label>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            style={{
+              padding: '10px',
+              border: '2px solid #3498db',
+              borderRadius: '5px',
+              fontSize: '16px',
+              fontWeight: 'bold'
+            }}
+          />
+        </div>
+      </div>
       
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
         <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
@@ -89,7 +116,7 @@ const Financials = () => {
         <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           <h2 style={{ marginBottom: '20px', color: '#2c3e50' }}>Calculations</h2>
           
-          {financials && (
+          {financials ? (
             <div>
               <FinancialRow label="Total Daily Income" value={financials.totalDailyIncome} color="#3498db" />
               <FinancialRow label="Studio Cut (13%)" value={financials.studioCut} color="#e74c3c" />
@@ -108,6 +135,11 @@ const Financials = () => {
               <FinancialRow label="Total After Expenses" value={financials.totalAfterExpenses} color="#27ae60" />
               <FinancialRow label="Total Profit" value={financials.totalProfit} color="#27ae60" bold />
             </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '40px', color: '#95a5a6' }}>
+              <p>No financial data for this date.</p>
+              <p>Enter income sources to create a record.</p>
+            </div>
           )}
         </div>
       </div>
@@ -124,7 +156,7 @@ const FinancialRow = ({ label, value, color, bold }) => (
     fontSize: bold ? '18px' : '14px'
   }}>
     <span>{label}:</span>
-    <span style={{ color }}>${value || 0}</span>
+    <span style={{ color }}>Rs {value || 0}</span>
   </div>
 );
 
