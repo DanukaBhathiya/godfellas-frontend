@@ -20,7 +20,7 @@ const ArtistProfiles = () => {
 
   return (
     <div>
-      <h1 style={{ marginBottom: '30px', textAlign: 'center' }}>Meet Our Artists</h1>
+      <h1 style={{ marginBottom: '30px' }}>Meet Our Artists</h1>
       
       <div style={{ 
         display: 'grid', 
