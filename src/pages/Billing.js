@@ -38,8 +38,6 @@ const Billing = () => {
             <div class="row"><span>Service:</span><span>${billing.serviceType}</span></div>
             <div class="row"><span>Payment Method:</span><span>${billing.paymentMethod}</span></div>
             <hr/>
-            <div class="row"><span>Amount:</span><span>Rs ${billing.amount}</span></div>
-            <div class="row"><span>Studio Cut (13%):</span><span>Rs ${(billing.amount * 0.13).toFixed(2)}</span></div>
             <div class="row total"><span>Total:</span><span>Rs ${billing.amount}</span></div>
           </div>
           <div style="margin-top: 100px;">
