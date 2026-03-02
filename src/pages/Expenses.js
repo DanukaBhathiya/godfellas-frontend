@@ -79,7 +79,7 @@ const Expenses = () => {
           borderLeft: '4px solid #e74c3c'
         }}>
           <h3 style={{ color: '#2c3e50', marginBottom: '10px' }}>Total Expenses</h3>
-          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#e74c3c' }}>${totalExpenses.toFixed(2)}</p>
+          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#e74c3c' }}>Rs {totalExpenses.toFixed(2)}</p>
         </div>
         <div style={{
           background: 'white',
@@ -89,7 +89,7 @@ const Expenses = () => {
           borderLeft: '4px solid #9b59b6'
         }}>
           <h3 style={{ color: '#2c3e50', marginBottom: '10px' }}>Dimu Expenses</h3>
-          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#9b59b6' }}>${dimuExpenses.toFixed(2)}</p>
+          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#9b59b6' }}>Rs {dimuExpenses.toFixed(2)}</p>
         </div>
       </div>
 
@@ -181,7 +181,7 @@ const Expenses = () => {
                 <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>{expense.category}</td>
                 <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>{expense.description}</td>
                 <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6', fontWeight: 'bold' }}>
-                  ${expense.amount}
+                  Rs {expense.amount}
                 </td>
                 <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>{expense.paymentMethod}</td>
                 <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>

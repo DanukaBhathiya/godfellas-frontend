@@ -32,10 +32,10 @@ const Dashboard = () => {
         gap: '20px',
         marginBottom: '30px'
       }}>
-        <Card title="Today's Income" value={`$${summary?.todayIncome || 0}`} color="#27ae60" />
-        <Card title="Today's Expenses" value={`$${summary?.todayExpenses || 0}`} color="#e74c3c" />
-        <Card title="Today's Profit" value={`$${summary?.todayProfit || 0}`} color="#3498db" />
-        <Card title="Studio Cut (13%)" value={`$${summary?.studioCut || 0}`} color="#9b59b6" />
+        <Card title="Today's Income" value={`Rs ${summary?.todayIncome || 0}`} color="#27ae60" />
+        <Card title="Today's Expenses" value={`Rs ${summary?.todayExpenses || 0}`} color="#e74c3c" />
+        <Card title="Today's Profit" value={`Rs ${summary?.todayProfit || 0}`} color="#3498db" />
+        <Card title="Studio Cut (13%)" value={`Rs ${summary?.studioCut || 0}`} color="#9b59b6" />
       </div>
 
       <div style={{ 

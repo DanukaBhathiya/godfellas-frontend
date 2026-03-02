@@ -170,8 +170,8 @@ const Inventory = () => {
                 </td>
                 <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>{item.category}</td>
                 <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>{item.quantity}</td>
-                <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>${item.unitCost}</td>
-                <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>${item.totalCost}</td>
+                <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>Rs {item.unitCost}</td>
+                <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>Rs {item.totalCost}</td>
                 <td style={{ padding: '15px', borderBottom: '1px solid #dee2e6' }}>
                   <span style={{
                     padding: '4px 8px',

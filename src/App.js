@@ -9,6 +9,7 @@ import Financials from './pages/Financials';
 import Clients from './pages/Clients';
 import Expenses from './pages/Expenses';
 import Reports from './pages/Reports';
+import ArtistProfiles from './pages/ArtistProfiles';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/clients" element={<Clients />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/artist-profiles" element={<ArtistProfiles />} />
         </Routes>
       </Layout>
     </Router>

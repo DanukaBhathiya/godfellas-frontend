@@ -17,6 +17,8 @@ export const api = {
   getResidents: () => axios.get(`${API_BASE}/artists/residents`),
   getGuests: () => axios.get(`${API_BASE}/artists/guests`),
   addArtist: (data) => axios.post(`${API_BASE}/artists`, data),
+  updateArtist: (id, data) => axios.put(`${API_BASE}/artists/${id}`, data),
+  deleteArtist: (id) => axios.delete(`${API_BASE}/artists/${id}`),
   
   // Inventory
   getInventory: () => axios.get(`${API_BASE}/inventory`),
@@ -35,5 +37,10 @@ export const api = {
   
   // Billing
   createBilling: (data) => axios.post(`${API_BASE}/billing`, data),
-  getBillings: () => axios.get(`${API_BASE}/billing`)
+  getBillings: () => axios.get(`${API_BASE}/billing`),
+  
+  // Artist Work History
+  getArtistWorkHistory: (artistId) => axios.get(`${API_BASE}/artist-work-history/artist/${artistId}`),
+  getArtistEarnings: (artistId, startDate, endDate) => 
+    axios.get(`${API_BASE}/artist-work-history/artist/${artistId}/earnings?startDate=${startDate}&endDate=${endDate}`)
 };

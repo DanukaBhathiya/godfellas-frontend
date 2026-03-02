@@ -4,7 +4,9 @@ import { api } from '../services/api';
 const Artists = () => {
   const [artists, setArtists] = useState([]);
   const [filter, setFilter] = useState('ALL');
+  const [styleFilter, setStyleFilter] = useState('ALL');
   const [showForm, setShowForm] = useState(false);
+  const [editingArtist, setEditingArtist] = useState(null);
   const [form, setForm] = useState({
     name: '',
     category: 'RESIDENT',
@@ -39,10 +41,19 @@ const Artists = () => {
     }
   };
 
+  const filteredArtists = styleFilter === 'ALL' 
+    ? artists 
+    : artists.filter(a => a.style?.toLowerCase().includes(styleFilter.toLowerCase()));
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.addArtist(form);
+      if (editingArtist) {
+        await api.updateArtist(editingArtist.id, form);
+        setEditingArtist(null);
+      } else {
+        await api.addArtist(form);
+      }
       setForm({
         name: '',
         category: 'RESIDENT',
@@ -56,7 +67,24 @@ const Artists = () => {
       setShowForm(false);
       loadArtists();
     } catch (error) {
-      console.error('Error adding artist:', error);
+      console.error('Error saving artist:', error);
+    }
+  };
+
+  const handleEdit = (artist) => {
+    setEditingArtist(artist);
+    setForm(artist);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to remove this artist?')) {
+      try {
+        await api.deleteArtist(id);
+        loadArtists();
+      } catch (error) {
+        console.error('Error deleting artist:', error);
+      }
     }
   };
 
@@ -80,7 +108,7 @@ const Artists = () => {
       </div>
 
       <div style={{ marginBottom: '20px' }}>
-        <label style={{ marginRight: '10px', fontWeight: 'bold' }}>Filter:</label>
+        <label style={{ marginRight: '10px', fontWeight: 'bold' }}>Category:</label>
         {['ALL', 'RESIDENT', 'GUEST'].map(option => (
           <button
             key={option}
@@ -100,6 +128,22 @@ const Artists = () => {
         ))}
       </div>
 
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ marginRight: '10px', fontWeight: 'bold' }}>Style:</label>
+        <input
+          type="text"
+          placeholder="Filter by style (e.g., Traditional, Realism)"
+          value={styleFilter === 'ALL' ? '' : styleFilter}
+          onChange={(e) => setStyleFilter(e.target.value || 'ALL')}
+          style={{
+            padding: '8px 15px',
+            border: '2px solid #ddd',
+            borderRadius: '5px',
+            width: '300px'
+          }}
+        />
+      </div>
+
       {showForm && (
         <div style={{ 
           background: 'white', 
@@ -108,7 +152,7 @@ const Artists = () => {
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
           marginBottom: '20px'
         }}>
-          <h3 style={{ marginBottom: '20px' }}>Add New Artist</h3>
+          <h3 style={{ marginBottom: '20px' }}>{editingArtist ? 'Edit Artist' : 'Add New Artist'}</h3>
           <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
             <input
               type="text"
@@ -180,7 +224,7 @@ const Artists = () => {
                 gridColumn: '1 / -1'
               }}
             >
-              Add Artist
+              {editingArtist ? 'Update Artist' : 'Add Artist'}
             </button>
           </form>
         </div>
@@ -191,7 +235,7 @@ const Artists = () => {
         gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
         gap: '20px'
       }}>
-        {artists.map(artist => (
+        {filteredArtists.map(artist => (
           <div
             key={artist.id}
             style={{
@@ -207,9 +251,39 @@ const Artists = () => {
             <p><strong>Style:</strong> {artist.style || 'N/A'}</p>
             <p><strong>Experience:</strong> {artist.yearsOfExperience || 'N/A'} years</p>
             <p><strong>Specialization:</strong> {artist.specialization || 'N/A'}</p>
-            <p><strong>Rate:</strong> ${artist.hourlyRate || 'N/A'}/hr</p>
+            <p><strong>Rate:</strong> Rs {artist.hourlyRate || 'N/A'}/hr</p>
             <p><strong>Email:</strong> {artist.email || 'N/A'}</p>
             <p><strong>Contact:</strong> {artist.contactNumber || 'N/A'}</p>
+            <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
+              <button
+                onClick={() => handleEdit(artist)}
+                style={{
+                  flex: 1,
+                  padding: '8px',
+                  background: '#3498db',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(artist.id)}
+                style={{
+                  flex: 1,
+                  padding: '8px',
+                  background: '#e74c3c',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Remove
+              </button>
+            </div>
           </div>
         ))}
       </div>

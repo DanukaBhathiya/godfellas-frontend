@@ -12,6 +12,13 @@ const Financials = () => {
     productSale: '',
     etc: ''
   });
+  const [expenseForm, setExpenseForm] = useState({
+    totalAdvancePayment: '',
+    totalExpenses: '',
+    dimuExpenses: '',
+    totalBuyingTattooProduct: '',
+    productPayingAfterSaving: ''
+  });
 
   useEffect(() => {
     loadFinancials();
@@ -29,6 +36,13 @@ const Financials = () => {
         productSale: response.data.productSale || '',
         etc: response.data.etc || ''
       });
+      setExpenseForm({
+        totalAdvancePayment: response.data.totalAdvancePayment || '',
+        totalExpenses: response.data.totalExpenses || '',
+        dimuExpenses: response.data.dimuExpenses || '',
+        totalBuyingTattooProduct: response.data.totalBuyingTattooProduct || '',
+        productPayingAfterSaving: response.data.productPayingAfterSaving || ''
+      });
     } catch (error) {
       console.error('Error loading financials:', error);
       // Initialize empty form if no data exists
@@ -40,6 +54,13 @@ const Financials = () => {
         piercing: '',
         productSale: '',
         etc: ''
+      });
+      setExpenseForm({
+        totalAdvancePayment: '',
+        totalExpenses: '',
+        dimuExpenses: '',
+        totalBuyingTattooProduct: '',
+        productPayingAfterSaving: ''
       });
     }
   };
@@ -57,6 +78,13 @@ const Financials = () => {
     setIncomeForm(prev => ({ ...prev, [source]: value }));
     if (value) {
       updateIncome(source, parseFloat(value));
+    }
+  };
+
+  const handleExpenseChange = (field, value) => {
+    setExpenseForm(prev => ({ ...prev, [field]: value }));
+    if (value) {
+      updateIncome(field, parseFloat(value));
     }
   };
 
@@ -81,7 +109,7 @@ const Financials = () => {
         </div>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
         <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           <h2 style={{ marginBottom: '20px', color: '#2c3e50' }}>Income Sources</h2>
           
@@ -114,6 +142,39 @@ const Financials = () => {
         </div>
 
         <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <h2 style={{ marginBottom: '20px', color: '#2c3e50' }}>Expenses & Advances</h2>
+          
+          {[
+            { key: 'totalAdvancePayment', label: 'Total Advance Payment' },
+            { key: 'totalExpenses', label: 'Total Expenses' },
+            { key: 'dimuExpenses', label: 'Dimu Expenses' },
+            { key: 'totalBuyingTattooProduct', label: 'Total Buying Tattoo Product' },
+            { key: 'productPayingAfterSaving', label: 'Product Paying After Saving' }
+          ].map(item => (
+            <div key={item.key} style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                {item.label}
+              </label>
+              <input
+                type="number"
+                value={expenseForm[item.key]}
+                onChange={(e) => handleExpenseChange(item.key, e.target.value)}
+                readOnly={item.key === 'totalExpenses' || item.key === 'dimuExpenses'}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  background: (item.key === 'totalExpenses' || item.key === 'dimuExpenses') ? '#f0f0f0' : 'white',
+                  cursor: (item.key === 'totalExpenses' || item.key === 'dimuExpenses') ? 'not-allowed' : 'text'
+                }}
+                placeholder={item.key === 'totalExpenses' || item.key === 'dimuExpenses' ? 'Auto-calculated from Expenses' : '0.00'}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div style={{ background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           <h2 style={{ marginBottom: '20px', color: '#2c3e50' }}>Calculations</h2>
           
           {financials ? (
@@ -131,8 +192,18 @@ const Financials = () => {
               
               <hr style={{ margin: '20px 0' }} />
               
+              <FinancialRow label="Total Advance Payment" value={financials.totalAdvancePayment} color="#e67e22" />
+              <FinancialRow label="After Deduction Artist Payment" value={financials.afterDeductionArtistPayment} color="#16a085" />
+              
+              <hr style={{ margin: '20px 0' }} />
+              
               <FinancialRow label="Total Expenses" value={financials.totalExpenses} color="#e74c3c" />
               <FinancialRow label="Total After Expenses" value={financials.totalAfterExpenses} color="#27ae60" />
+              <FinancialRow label="Total Buying Tattoo Product" value={financials.totalBuyingTattooProduct} color="#8e44ad" />
+              <FinancialRow label="Product Paying After Saving" value={financials.productPayingAfterSaving} color="#2980b9" />
+              
+              <hr style={{ margin: '20px 0' }} />
+              
               <FinancialRow label="Total Profit" value={financials.totalProfit} color="#27ae60" bold />
             </div>
           ) : (

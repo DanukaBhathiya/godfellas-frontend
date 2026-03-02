@@ -12,6 +12,47 @@ const Billing = () => {
   });
   const [billings, setBillings] = useState([]);
 
+  const printInvoice = (billing) => {
+    const printWindow = window.open('', '', 'width=800,height=600');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Invoice - ${billing.id}</title>
+          <style>
+            body { font-family: Arial; padding: 40px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .details { margin: 20px 0; }
+            .row { display: flex; justify-content: space-between; margin: 10px 0; }
+            .signature { margin-top: 80px; border-top: 1px solid #000; width: 200px; }
+            .total { font-size: 20px; font-weight: bold; margin-top: 20px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>GOODFELLAS TATTOO STUDIO</h1>
+            <p>Invoice #${billing.id}</p>
+            <p>Date: ${new Date(billing.billingDate).toLocaleDateString()}</p>
+          </div>
+          <div class="details">
+            <div class="row"><span>Artist:</span><span>${billing.artist?.name || 'N/A'}</span></div>
+            <div class="row"><span>Service:</span><span>${billing.serviceType}</span></div>
+            <div class="row"><span>Payment Method:</span><span>${billing.paymentMethod}</span></div>
+            <hr/>
+            <div class="row"><span>Amount:</span><span>Rs ${billing.amount}</span></div>
+            <div class="row"><span>Studio Cut (13%):</span><span>Rs ${(billing.amount * 0.13).toFixed(2)}</span></div>
+            <div class="row total"><span>Total:</span><span>Rs ${billing.amount}</span></div>
+          </div>
+          <div style="margin-top: 100px;">
+            <div class="signature">Customer Signature</div>
+            <div class="signature" style="margin-top: 50px;">Staff Signature</div>
+          </div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
   useEffect(() => {
     loadArtists();
     loadBillings();
@@ -118,7 +159,7 @@ const Billing = () => {
 
             <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Amount ($)
+                Amount (Rs)
               </label>
               <input
                 type="number"
@@ -166,15 +207,23 @@ const Billing = () => {
                 <h4 style={{ marginBottom: '10px' }}>Calculation Preview:</h4>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span>Total Amount:</span>
-                  <span>${parseFloat(form.amount).toFixed(2)}</span>
+                  <span>Rs {parseFloat(form.amount).toFixed(2)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span>Studio Cut (13%):</span>
-                  <span>${(parseFloat(form.amount) * 0.13).toFixed(2)}</span>
+                  <span>Rs {(parseFloat(form.amount) * 0.13).toFixed(2)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>After 13%:</span>
+                  <span>Rs {(parseFloat(form.amount) * 0.87).toFixed(2)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
-                  <span>Artist Payment:</span>
-                  <span>${(parseFloat(form.amount) * 0.87).toFixed(2)}</span>
+                  <span>Artist Payment (50%):</span>
+                  <span>Rs {(parseFloat(form.amount) * 0.87 * 0.50).toFixed(2)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
+                  <span>Dimu Payment (50%):</span>
+                  <span>Rs {(parseFloat(form.amount) * 0.87 * 0.50).toFixed(2)}</span>
                 </div>
               </div>
             )}
@@ -213,11 +262,26 @@ const Billing = () => {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                   <strong>{billing.artist?.name}</strong>
-                  <span style={{ color: '#27ae60', fontWeight: 'bold' }}>${billing.amount}</span>
+                  <span style={{ color: '#27ae60', fontWeight: 'bold' }}>Rs {billing.amount}</span>
                 </div>
                 <div style={{ fontSize: '14px', color: '#666' }}>
                   {billing.serviceType} • {billing.paymentMethod} • {new Date(billing.billingDate).toLocaleDateString()}
                 </div>
+                <button
+                  onClick={() => printInvoice(billing)}
+                  style={{
+                    marginTop: '10px',
+                    padding: '5px 10px',
+                    background: '#3498db',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '3px',
+                    cursor: 'pointer',
+                    fontSize: '12px'
+                  }}
+                >
+                  Print Invoice
+                </button>
               </div>
             ))}
           </div>

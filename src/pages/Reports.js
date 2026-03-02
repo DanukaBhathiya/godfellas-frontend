@@ -127,6 +127,7 @@ const Reports = () => {
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
+                    max={new Date().toISOString().split('T')[0]}
                     style={{
                       width: '100%',
                       padding: '10px',
@@ -170,6 +171,7 @@ const Reports = () => {
                     type="month"
                     value={selectedMonth}
                     onChange={(e) => setSelectedMonth(e.target.value)}
+                    max={new Date().toISOString().slice(0, 7)}
                     style={{
                       width: '100%',
                       padding: '10px',
@@ -209,12 +211,9 @@ const Reports = () => {
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
                     Select Year
                   </label>
-                  <input
-                    type="number"
+                  <select
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
-                    min="2020"
-                    max="2100"
                     style={{
                       width: '100%',
                       padding: '10px',
@@ -222,7 +221,11 @@ const Reports = () => {
                       borderRadius: '4px',
                       fontSize: '14px'
                     }}
-                  />
+                  >
+                    {Array.from({ length: new Date().getFullYear() - 2019 }, (_, i) => 2020 + i).map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
                 </div>
                 <button
                   onClick={downloadYearlySales}
@@ -256,18 +259,19 @@ const Reports = () => {
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
                   Select Month
                 </label>
-                <input
-                  type="month"
-                  value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px'
-                  }}
-                />
+                  <input
+                    type="month"
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(e.target.value)}
+                    max={new Date().toISOString().slice(0, 7)}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      fontSize: '14px'
+                    }}
+                  />
               </div>
               <button
                 onClick={downloadMonthlySalary}
