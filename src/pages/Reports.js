@@ -6,45 +6,68 @@ const Reports = () => {
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  const downloadDailySales = async () => {
+  const downloadDailySales = async (format = 'pdf') => {
     if (!selectedDate) {
       alert('Please select a date');
       return;
     }
-    const url = `/api/reports/sales/daily?date=${selectedDate}`;
-    await downloadPdf(url, `daily_sales_${selectedDate}.pdf`);
+    const url = format === 'excel' 
+      ? `/api/reports/excel/sales/daily?startDate=${selectedDate}&endDate=${selectedDate}`
+      : `/api/reports/sales/daily?date=${selectedDate}`;
+    const filename = format === 'excel' 
+      ? `daily_sales_${selectedDate}.xlsx`
+      : `daily_sales_${selectedDate}.pdf`;
+    await downloadFile(url, filename, format);
   };
 
-  const downloadMonthlySales = async () => {
+  const downloadMonthlySales = async (format = 'pdf') => {
     if (!selectedMonth) {
       alert('Please select a month');
       return;
     }
     const [year, month] = selectedMonth.split('-');
-    const url = `/api/reports/sales/monthly?year=${year}&month=${parseInt(month)}`;
-    await downloadPdf(url, `monthly_sales_${selectedMonth}.pdf`);
+    const url = format === 'excel'
+      ? `/api/reports/excel/sales/monthly?year=${year}&month=${parseInt(month)}`
+      : `/api/reports/sales/monthly?year=${year}&month=${parseInt(month)}`;
+    const filename = format === 'excel'
+      ? `monthly_sales_${selectedMonth}.xlsx`
+      : `monthly_sales_${selectedMonth}.pdf`;
+    await downloadFile(url, filename, format);
   };
 
-  const downloadYearlySales = async () => {
+  const downloadYearlySales = async (format = 'pdf') => {
     if (!selectedYear) {
       alert('Please select a year');
       return;
     }
-    const url = `/api/reports/sales/yearly?year=${selectedYear}`;
-    await downloadPdf(url, `yearly_sales_${selectedYear}.pdf`);
+    const url = format === 'excel'
+      ? `/api/reports/excel/sales/yearly?year=${selectedYear}`
+      : `/api/reports/sales/yearly?year=${selectedYear}`;
+    const filename = format === 'excel'
+      ? `yearly_sales_${selectedYear}.xlsx`
+      : `yearly_sales_${selectedYear}.pdf`;
+    await downloadFile(url, filename, format);
   };
 
-  const downloadMonthlySalary = async () => {
+  const downloadMonthlySalary = async (format = 'pdf') => {
     if (!selectedMonth) {
       alert('Please select a month');
       return;
     }
     const [year, month] = selectedMonth.split('-');
-    const url = `/api/reports/salary/monthly?year=${year}&month=${parseInt(month)}`;
-    await downloadPdf(url, `salary_sheet_${selectedMonth}.pdf`);
+    const startDate = `${year}-${month.padStart(2, '0')}-01`;
+    const endDate = new Date(year, month, 0).toISOString().split('T')[0];
+    
+    const url = format === 'excel'
+      ? `/api/reports/excel/salary/monthly?startDate=${startDate}&endDate=${endDate}`
+      : `/api/reports/salary/monthly?year=${year}&month=${parseInt(month)}`;
+    const filename = format === 'excel'
+      ? `salary_sheet_${selectedMonth}.xlsx`
+      : `salary_sheet_${selectedMonth}.pdf`;
+    await downloadFile(url, filename, format);
   };
 
-  const downloadPdf = async (url, filename) => {
+  const downloadFile = async (url, filename, format) => {
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to download');
@@ -137,22 +160,40 @@ const Reports = () => {
                     }}
                   />
                 </div>
-                <button
-                  onClick={downloadDailySales}
-                  style={{
-                    padding: '10px 25px',
-                    background: '#27ae60',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  Download PDF
-                </button>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    onClick={() => downloadDailySales('pdf')}
+                    style={{
+                      padding: '10px 20px',
+                      background: '#e74c3c',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    📄 PDF
+                  </button>
+                  <button
+                    onClick={() => downloadDailySales('excel')}
+                    style={{
+                      padding: '10px 20px',
+                      background: '#27ae60',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    📊 Excel
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -181,22 +222,40 @@ const Reports = () => {
                     }}
                   />
                 </div>
-                <button
-                  onClick={downloadMonthlySales}
-                  style={{
-                    padding: '10px 25px',
-                    background: '#27ae60',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  Download PDF
-                </button>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    onClick={() => downloadMonthlySales('pdf')}
+                    style={{
+                      padding: '10px 20px',
+                      background: '#e74c3c',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    📄 PDF
+                  </button>
+                  <button
+                    onClick={() => downloadMonthlySales('excel')}
+                    style={{
+                      padding: '10px 20px',
+                      background: '#27ae60',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    📊 Excel
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -227,22 +286,40 @@ const Reports = () => {
                     ))}
                   </select>
                 </div>
-                <button
-                  onClick={downloadYearlySales}
-                  style={{
-                    padding: '10px 25px',
-                    background: '#27ae60',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  Download PDF
-                </button>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    onClick={() => downloadYearlySales('pdf')}
+                    style={{
+                      padding: '10px 20px',
+                      background: '#e74c3c',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    📄 PDF
+                  </button>
+                  <button
+                    onClick={() => downloadYearlySales('excel')}
+                    style={{
+                      padding: '10px 20px',
+                      background: '#27ae60',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    📊 Excel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -273,22 +350,40 @@ const Reports = () => {
                     }}
                   />
               </div>
-              <button
-                onClick={downloadMonthlySalary}
-                style={{
-                  padding: '10px 25px',
-                  background: '#3498db',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                Download PDF
-              </button>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  onClick={() => downloadMonthlySalary('pdf')}
+                  style={{
+                    padding: '10px 20px',
+                    background: '#e74c3c',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  📄 PDF
+                </button>
+                <button
+                  onClick={() => downloadMonthlySalary('excel')}
+                  style={{
+                    padding: '10px 20px',
+                    background: '#27ae60',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  📊 Excel
+                </button>
+              </div>
             </div>
 
             <div style={{ 
@@ -322,8 +417,10 @@ const Reports = () => {
       }}>
         <h4 style={{ marginBottom: '10px', color: '#856404' }}>📋 Important Notes</h4>
         <ul style={{ color: '#856404', lineHeight: '1.8', margin: 0 }}>
-          <li>All reports are generated in PDF format (non-editable)</li>
+          <li><strong>PDF Reports:</strong> Non-editable, professional format for official use</li>
+          <li><strong>Excel Reports:</strong> Editable spreadsheets with professional formatting</li>
           <li>Reports include all active artists in the system</li>
+          <li>Excel reports feature company branding, proper styling, and currency formatting</li>
           <li>Sales reports show daily earnings, expenses, and profit calculations</li>
           <li>Salary sheets are available monthly only</li>
         </ul>
