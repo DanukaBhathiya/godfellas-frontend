@@ -1,20 +1,25 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const { user, logout } = useAuth();
   
-  const navItems = [
-    { path: '/', label: 'Dashboard', icon: '📊' },
-    { path: '/billing', label: 'Billing', icon: '💳' },
-    { path: '/artists', label: 'Artists', icon: '👨🎨' },
-    { path: '/artist-profiles', label: 'Artist Profiles', icon: '⭐' },
-    { path: '/clients', label: 'Clients', icon: '👥' },
-    { path: '/inventory', label: 'Inventory', icon: '📦' },
-    { path: '/expenses', label: 'Expenses', icon: '💸' },
-    { path: '/financials', label: 'Financials', icon: '💰' },
-    { path: '/reports', label: 'Reports', icon: '📄' }
+  const allNavItems = [
+    { path: '/', label: 'Dashboard', icon: '📊', roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'RECEPTIONIST', 'VIEWER'] },
+    { path: '/billing', label: 'Billing', icon: '💳', roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'RECEPTIONIST'] },
+    { path: '/artists', label: 'Artists', icon: '👨🎨', roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER'] },
+    { path: '/artist-profiles', label: 'Artist Profiles', icon: '⭐', roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'ARTIST', 'RECEPTIONIST'] },
+    { path: '/clients', label: 'Clients', icon: '👥', roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'RECEPTIONIST'] },
+    { path: '/inventory', label: 'Inventory', icon: '📦', roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER'] },
+    { path: '/expenses', label: 'Expenses', icon: '💸', roles: ['SUPER_ADMIN', 'ADMIN', 'MANAGER'] },
+    { path: '/financials', label: 'Financials', icon: '💰', roles: ['SUPER_ADMIN', 'ADMIN'] },
+    { path: '/reports', label: 'Reports', icon: '📄', roles: ['SUPER_ADMIN', 'ADMIN', 'VIEWER'] },
+    { path: '/users', label: 'User Management', icon: '👤', roles: ['SUPER_ADMIN', 'ADMIN'] }
   ];
+  
+  const navItems = allNavItems.filter(item => !user || item.roles.includes(user.role));
 
   return (
     <div style={{ display: 'flex', height: '100vh'
@@ -39,6 +44,15 @@ const Layout = ({ children }) => {
         }}>
           GOOD FELLAS POS
         </h2>
+        <div style={{ 
+          padding: '10px 20px', 
+          color: '#95a5a6', 
+          fontSize: '12px',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          marginBottom: '10px'
+        }}>
+          {user?.username} ({user?.role})
+        </div>
         {navItems.map(item => (
           <Link
             key={item.path}
@@ -57,6 +71,23 @@ const Layout = ({ children }) => {
             {item.icon} {item.label}
           </Link>
         ))}
+        <button
+          onClick={logout}
+          style={{
+            display: 'block',
+            width: '90%',
+            margin: '20px auto',
+            padding: '10px',
+            background: '#e74c3c',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          🚪 Logout
+        </button>
       </nav>
       
       <main style={{ 
